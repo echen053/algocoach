@@ -1,3 +1,5 @@
+import 'package:algo_flutter/controllers/topic_controller.dart';
+import 'package:algo_flutter/screens/topic_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -45,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String? selectedValue = 'None';
   Widget conceptPage = TopicWidget.getPage('None', 0);
   Widget problemsPage = TopicWidget.getPage('None', 1);
+  TopicController controller = TopicController.build();
 
   @override
   Widget build(BuildContext context) {
@@ -53,41 +56,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.onPrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            Text('Select a Topic:'),
-            DropdownButton<String>(
-              value: selectedValue,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedValue = newValue;
-                  conceptPage = TopicWidget.getPage(selectedValue, 0);
-                  problemsPage = TopicWidget.getPage(selectedValue, 1);
-                });
-              },
-              items: <String>[
-                'None',
-                'Depth First Search',
-                'Breadth First Search',
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                conceptPage,
-                SizedBox(width: 10),
-                problemsPage,
-              ],
-            ),
-          ],
-        ),
-      ),
+      body: TopicScreen(controller: controller,
+        onRefresh: () {
+        // Put the logic you want to execute on refresh here
+        // This can include updating state variables, fetching new data, etc.
+
+        // Trigger a rebuild of the widget
+        setState(() {});
+      },),
     );
   }
 }
