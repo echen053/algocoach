@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../models/concept.dart';
+import 'constants.dart';
 
 class ConceptWidget extends StatelessWidget {
   final Concept? concept;
@@ -9,6 +11,14 @@ class ConceptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(concept?.description ?? "None");
+    return Expanded(
+      child: Container(
+          padding: EdgeInsets.all(10.0),
+          decoration: BoxDecoration(
+            color: Constants.CARD_BACKGROUND_COLOR,
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: Center(child: Text(concept?.description ?? "None"))),
+    );
   }
 }

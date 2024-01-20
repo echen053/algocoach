@@ -45,15 +45,13 @@ class _MyHomePageState extends State<MyHomePage> {
   // Numbers represent the different topics availble (todo later)
   int topic = 0;
   String? selectedValue = 'None';
-  Widget conceptPage = TopicWidget.getPage('None', 0);
-  Widget problemsPage = TopicWidget.getPage('None', 1);
   TopicController controller = TopicController.build();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Color(0xFFE5F8E5).withOpacity(0.25),
         title: Text(widget.title),
       ),
       body: TopicScreen(controller: controller,
@@ -83,7 +81,7 @@ abstract class TopicWidget extends StatelessWidget {
       // color: theme.colorScheme.onPrimary,
       elevation: 8,
       child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(concept),
             Padding(
