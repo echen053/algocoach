@@ -1,46 +1,103 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
 import '../models/concept.dart';
 import '../models/problem.dart';
 import '../models/topic.dart';
 
+class ApiException implements Exception {
+  final String message;
+
+  ApiException(this.message);
+
+  @override
+  String toString() => 'ApiException: $message';
+}
+
+
 class TopicController {
-  List<Topic> allTopics = [];
+  final String apiBaseUrl = "http://localhost:8000";
+  List<String> allTopicNames = [];
+  String? selectedTopicName;
   Topic? selectedTopic;
 
-  TopicController({
-    required this.allTopics,
-  }) {
-    selectedTopic = allTopics[0];
+  TopicController();
+
+
+  // Call API to get all topics
+  Future<List<String>> getTopics() async {
+    try {
+      final response = await http.get(Uri.parse("$apiBaseUrl/topics/all"));
+
+      if (response.statusCode == 200) {
+        List<dynamic> topicsJson = response.body.isEmpty ? [] : json.decode(response.body);
+        List<String> topics = List<String>.from(topicsJson);
+        allTopicNames = topics;
+        return allTopicNames;
+      } else if (response.statusCode == 404) {
+        // Simulating a scenario where the API returns a 404 error
+        throw ApiException("No topics found");
+      } else {
+        throw ApiException("Failed to load topics. Status code: ${response.statusCode}");
+      }
+    } catch (error) {
+      // Handle any exceptions that might occur during the request
+      print('Error: $error');
+      throw ApiException("Failed to load topics");
+    }
   }
 
-  void setSelectedTopic(Topic? topic) {
-    selectedTopic = topic;
+  // Call API to get one topic by name
+  Future<Topic> getTopicByName(String topicName) async {
+    try {
+      final response = await http.get(Uri.parse("$apiBaseUrl/topics?name=$topicName"));
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> topicJson = json.decode(response.body);
+        return Topic.fromJson(topicJson);
+      } else if (response.statusCode == 404) {
+        // Simulating a scenario where the API returns a 404 error
+        throw ApiException("No topics found");
+      } else {
+        throw ApiException("Failed to load topics. Status code: ${response.statusCode}");
+      }
+    } catch (error) {
+      // Handle any exceptions that might occur during the request
+      print('Error: $error');
+      throw ApiException("Failed to load topics");
+    }
+  }
+
+  void setSelectedTopicName(String? topicName) async {
+    selectedTopicName = topicName;
+    // Call API to load topic
+    if (topicName == null) {
+      print("Error: No topic selected");
+      return;
+    }
+
+    selectedTopic = await getTopicByName(topicName);
+  }
+
+  Concept? getCurrentConcept() {
+    return selectedTopic?.concept;
+  }
+
+  List<Problem> getCurrentProblems() {
+    return [];
+  }
+
+  // TODO: To be removed
+  Problem? getFirstProblem() {
+    if (selectedTopic == null || selectedTopic?.problems.length == 0) {
+      return null;
+    }
+
+    return selectedTopic?.problems?[0];
   }
 
   static TopicController build() {
-    return TopicController(allTopics: [
-      Topic(
-          name:"None",
-          concept:Concept(description:""),
-        problems: [
-          Problem(name: "None", url: "none")
-        ]
-      ),
-      Topic(
-          name:"DFS",
-          concept:Concept(description:"This is DFS concept"),
-        problems: [
-          Problem(name: "L1.1", url: "https://www.leetcode.com/problems/l11"),
-          Problem(name: "L1.2", url: "https://www.leetcode.com/problems/l12"),
-        ]
-      ),
-      Topic(
-          name:"BFS",
-          concept:Concept(description:"This is BFS concept"),
-        problems: [
-          Problem(name: "L2.1", url: "https://www.leetcode.com/problems/l11"),
-          Problem(name: "L2.2", url: "https://www.leetcode.com/problems/l12"),
-        ]
-      )
-    ]);
+    return TopicController();
   }
 }

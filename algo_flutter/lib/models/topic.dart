@@ -11,4 +11,12 @@ class Topic {
     required this.concept,
     required this.problems,
   });
+
+  factory Topic.fromJson(Map<String, dynamic> json) {
+    return Topic(
+      name: json['name'],
+      concept: Concept.fromJson(json['concept']),
+      problems: (json['problems'] as List).map((problemJson) => Problem.fromJson(problemJson)).toList(),
+    );
+  }
 }

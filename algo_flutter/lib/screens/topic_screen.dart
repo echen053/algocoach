@@ -13,38 +13,63 @@ class TopicScreen extends StatelessWidget {
       {super.key, required this.controller, required this.onRefresh});
 
   void refresh() {
-    // logger("Refrehsing screens...");
+    // logger("Refreshing screens...");
     onRefresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const Text('Select a Topic:'),
-        DropdownButton<Topic>(
-          value: controller.selectedTopic,
-          onChanged: (Topic? newValue) {
-            controller.setSelectedTopic(newValue);
-            refresh();
-          },
-          items: controller.allTopics.map<DropdownMenuItem<Topic>>((Topic t) {
-            return DropdownMenuItem<Topic>(
-              value: t,
-              child: Text(t.name),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 5),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ConceptWidget(concept: controller.selectedTopic?.concept),
-            const SizedBox(width: 10),
-            ProblemWidget(problem: controller.selectedTopic?.problems[0]),
-          ],
-        ),
-      ],
+    return FutureBuilder(
+      future: controller.getTopics(),
+      builder: (context, AsyncSnapshot<List<String>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Display a waiting icon while the data is being fetched
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          // Handle errors
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          // Handle the case where no topics are available
+          return const Center(
+            child: Text('No topics available.'),
+          );
+        } else {
+          // Display the topics
+          List<String> topics = snapshot.data!;
+          return Column(
+              children: <Widget>[
+                const Text('Select a Topic:'),
+                DropdownButton<String>(
+                  value: controller.selectedTopicName,
+                  onChanged: (String? newValue) {
+                    controller.setSelectedTopicName(newValue);
+                    refresh();
+                  },
+                  items: controller.allTopicNames.map<DropdownMenuItem<String>>((
+                      String t) {
+                    return DropdownMenuItem<String>(
+                      value: t,
+                      child: Text(t),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    ConceptWidget(concept: controller.getCurrentConcept()),
+                    const SizedBox(width: 10),
+                    ProblemWidget(problem: controller.getFirstProblem()),
+                  ],
+                ),
+              ],
+          );
+        }
+      },
     );
   }
 }

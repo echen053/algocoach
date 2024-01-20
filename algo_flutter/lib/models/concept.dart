@@ -7,4 +7,10 @@ class Concept {
   Concept({
     required this.description,
   });
+
+  factory Concept.fromJson(Map<String, dynamic> json) {
+    return Concept(
+      description: json['description'] ?? "No description",
+    );
+  }
 }
