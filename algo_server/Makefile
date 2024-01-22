@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-start:
+start_jupyter:
 	OPEN_AI_API_KEY=$$OPEN_AI_API_KEY \
 	LANGCHAIN_HANDLER=langchain \
 	poetry run jupyter notebook --ip='*' --NotebookApp.token='' --NotebookApp.password=''
@@ -11,7 +11,7 @@ install: pyproject.toml
 update:
 	poetry update langchain
 
-server:
+start_server:
 	PYTHONPATH=./src uvicorn main:app --reload
 
 python:
