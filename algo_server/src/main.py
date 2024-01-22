@@ -3,6 +3,8 @@ from typing import Dict
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
+from db_service import DBService
+
 app = FastAPI()
 
 # WARNING: This is for local debug only
@@ -17,64 +19,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-ALL_TOPICS = [
-    {
-        "name": "BFS",
-        "concept": {
-            "name": "BFS Concept",
-            "description": "BFS is like flood fill.",
-        },
-        "problems": [
-            {
-                "name": "P1.1",
-                "url": "http:p1.1",
-            },
-            {
-                "name": "P1.2",
-                "url": "http:p1.2",
-            },
-        ],
-    },
-    {
-        "name": "DFS",
-        "concept": {
-            "name": "DFS Concept",
-            "description": "DFS is popular.",
-        },
-        "problems": [
-            {
-                "name": "P2.1",
-                "url": "http:p2.1",
-            },
-            {
-                "name": "P2.2",
-                "url": "http:p2.2",
-            },
-        ],
-    },
-    {
-        "name": "Topological Sorting",
-        "concept": {
-            "name": "Topological Sorting Concept",
-        },
-        "problems": [
-            {
-                "name": "P3.1",
-                "url": "http:p3.1",
-            },
-            {
-                "name": "P3.2",
-                "url": "http:p3.2",
-            },
-        ],
-    },
-]
-
 
 @app.get("/topics/all")
 async def get_all_topics():
     """Get all available topic names"""
-    return [t["name"] for t in ALL_TOPICS]
+    db = DBService()
+    return db.get_all_topic_names()
 
 
 @app.get("/topics")
@@ -85,7 +35,5 @@ async def get_topic_by_name(name: str) -> Dict:
     Return:
         Dictionary about the topic, or None if not found.
     """
-    result = next((item for item in ALL_TOPICS if item['name'] == name), None)
-    if not result:
-        raise HTTPException(status_code=404, detail="Topic not found")
-    return result
+    db = DBService()
+    return db.get_topic_details(name)

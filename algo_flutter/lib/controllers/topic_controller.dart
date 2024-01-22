@@ -81,7 +81,12 @@ class TopicController {
   }
 
   Concept? getCurrentConcept() {
-    return selectedTopic?.concept;
+    if (selectedTopic != null
+        && selectedTopic?.concepts != null
+        &&  selectedTopic!.concepts.isNotEmpty) {
+      return selectedTopic!.concepts[0];
+    }
+    return null;
   }
 
   List<Problem> getCurrentProblems() {
