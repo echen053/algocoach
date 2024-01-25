@@ -90,8 +90,9 @@ class TopicController {
   }
 
   List<Problem> getCurrentProblems() {
-    return [];
+    return selectedTopic?.problems ?? [];
   }
+
 
   // TODO: To be removed
   Problem? getFirstProblem() {
@@ -99,7 +100,7 @@ class TopicController {
       return null;
     }
 
-    return selectedTopic?.problems?[0];
+    return selectedTopic?.problems[0];
   }
 
   static TopicController build() {

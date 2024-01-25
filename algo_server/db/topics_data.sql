@@ -4,9 +4,19 @@ INSERT INTO Topic (id, name, description) VALUES
     (3, "Dynamic Programming", "Excellent math skills needed.");
 
  INSERT INTO Concept (description, topic_id) VALUES
-    ("The concept is like flood fill.", 1),
-    ("The concept is very useful in interview.", 2),
-    ("The concept is solving complex problems with simpler ones.", 3);
+    ("Breadth-First Search (BFS) is a graph traversal algorithm that explores a graph level by level." ||
+     "Starting from a source node, BFS visits all its neighbors before moving on to their neighbors, " ||
+     "and so on. It ensures that all nodes at the current depth are visited before moving on to the " ||
+     "nodes at the next depth. BFS is commonly implemented using a queue data structure.", 1),
+    ("DFS explores a graph or tree by going as deep as possible down each branch before backtracking." ||
+    "This is typically implemented using recursion or a stack.Backtracking is an extension of DFS." ||
+    "It involves trying out all possibilities until the desired solution is found or all options have" ||
+    "been exhausted. The key here is that when you determine the current path or choice does not lead to" ||
+    "a solution, you 'backtrack' to the previous step and try a different option.", 2),
+    ("Dynamic Programming is a powerful optimization technique used to solve problems by breaking them " ||
+    "down into smaller overlapping subproblems. It involves solving each subproblem only once and storing " ||
+    "its solution, avoiding redundant computations. The key idea is to store the solutions to subproblems " ||
+    "in a table to avoid redundant computations when the same subproblem reoccurs.", 3);
 
  INSERT INTO Problem (name, url, topic_id) VALUES
     ("278. First Bad Version", "https://leetcode.com/problems/first-bad-version", 1),

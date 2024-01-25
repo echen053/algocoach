@@ -40,7 +40,8 @@ class TopicScreen extends StatelessWidget {
         } else {
           // Display the topics
           List<String> topics = snapshot.data!;
-          return Column(
+          return SingleChildScrollView(
+            child: Column(
               children: <Widget>[
                 const Text('Select a Topic:'),
                 DropdownButton<String>(
@@ -49,8 +50,8 @@ class TopicScreen extends StatelessWidget {
                     controller.setSelectedTopicName(newValue);
                     refresh();
                   },
-                  items: controller.allTopicNames.map<DropdownMenuItem<String>>((
-                      String t) {
+                  items: controller.allTopicNames
+                      .map<DropdownMenuItem<String>>((String t) {
                     return DropdownMenuItem<String>(
                       value: t,
                       child: Text(t),
@@ -60,13 +61,28 @@ class TopicScreen extends StatelessWidget {
                 const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    ConceptWidget(concept: controller.getCurrentConcept()),
                     const SizedBox(width: 10),
-                    ProblemWidget(problem: controller.getFirstProblem()),
+                    Expanded(
+                      flex: 1,
+                      // Use Flexible for ConceptWidget
+                      child: ListView(shrinkWrap: true, children: [
+                        ConceptWidget(concept: controller.getCurrentConcept()),
+                      ]),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      flex: 1,
+                      // Use Flexible for ProblemWidget
+                      child: ProblemWidget(
+                          problems: controller.getCurrentProblems()),
+                    ),
+                    const SizedBox(width: 10),
                   ],
                 ),
               ],
+            ),
           );
         }
       },

@@ -11,14 +11,27 @@ class ConceptWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-          padding: EdgeInsets.all(10.0),
-          decoration: BoxDecoration(
-            color: Constants.CARD_BACKGROUND_COLOR,
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-          child: Center(child: Text(concept?.description ?? "None"))),
+    return Container(
+      width: 400,
+      padding: EdgeInsets.all(10.0),
+      decoration: const BoxDecoration(
+        color: Constants.CARD_BACKGROUND_COLOR,
+        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+      ),
+      child: Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            children: [
+              const Text(
+                "Concept:\n",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+              Text(concept?.description ?? "", softWrap: true),
+            ],
+          )),
     );
   }
 }
