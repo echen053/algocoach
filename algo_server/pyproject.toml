@@ -5,12 +5,15 @@ description = "AlgoCoach Server"
 authors = ["Emma Chen <“echen053@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "algo_server"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.109.0"
 starlette = "^0.35.1"
+openai = "^1.10.0"
+langchain = "^0.1.4"
+langchain-openai = "^0.0.5"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

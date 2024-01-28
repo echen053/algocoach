@@ -1,12 +1,10 @@
 import sqlite3
-from typing import List, Dict, Optional
 
 
 class DBService:
-    db_name = 'db/coach.db'
-
-    def __init__(self):
+    def __init__(self, db_name: str = 'db/coach.db'):
         self.conn = None
+        self.db_name = db_name
 
     def connect(self):
         # Establish a connection to the SQLite database
@@ -18,7 +16,8 @@ class DBService:
         if self.conn:
             self.conn.close()
 
-    def get_all_topic_names(self):
+    def get_all_topic_id_names(self) -> list[tuple[int, str]]:
+        """Retrieve all db record of (topic_id, topic_name) pair"""
         try:
             # Connect to the database
             self.connect()
@@ -27,19 +26,19 @@ class DBService:
             cursor = self.conn.cursor()
 
             # Execute the SQL query to select all topic names
-            cursor.execute('SELECT name FROM Topic')
+            cursor.execute('SELECT id, name FROM Topic')
 
             # Fetch all the rows
-            topic_names = cursor.fetchall()
+            id_names = cursor.fetchall()
 
             # Close the cursor
             cursor.close()
 
-            return [name[0] for name in topic_names]  # Extract names from the result
+            return [id_name_pair for id_name_pair in id_names]  # Extract names from the result
 
         except sqlite3.Error as e:
             print(f"SQLite error: {e}")
-            return None
+            return []
 
         finally:
             # Disconnect from the database
@@ -109,7 +108,7 @@ class DBService:
             # Disconnect from the database
             self.disconnect()
 
-    def get_topic_details(self, topic_name: str) -> Optional[dict]:
+    def get_topic_details(self, topic_name: str) -> dict | None:
         try:
             # Connect to the database
             self.connect()

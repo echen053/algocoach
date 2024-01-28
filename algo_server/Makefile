@@ -6,6 +6,7 @@ start_jupyter:
 	poetry run jupyter notebook --ip='*' --NotebookApp.token='' --NotebookApp.password=''
 
 install: pyproject.toml
+	poetry lock
 	poetry install
 
 update:
@@ -18,7 +19,7 @@ python:
 	poetry run python
 
 clean:
-	poetry env remove python
+	rm -rf .venv
 
 clean-cache:
 	poetry cache clear --all pypi

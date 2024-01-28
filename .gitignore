@@ -25,3 +25,10 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Python
+.idea/
+.venv/
+.env
+__pycache__/
+
