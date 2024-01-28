@@ -85,8 +85,7 @@ def test_fetch_topic_from_real_llm(openai_instance, topic_loader_real):
 
 
 def test_load_topics_from_db(topic_loader_with_mocked_llm, dbservice):
-    topic_loader_with_mocked_llm.load_topics_from_db()
-    all_db_topics = topic_loader_with_mocked_llm.all_topics
+    all_db_topics = topic_loader_with_mocked_llm.load_topics_from_db()
     assert len(all_db_topics) > 0
     assert isinstance(all_db_topics[0], Topic)
 
