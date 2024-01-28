@@ -13,7 +13,13 @@ brew install sqlite
 make server  # CTRL-C to stop it.
 ```
 
-## DB setup
+## Load DB data from LLM/ChatGPT
+```shell
+cd algo_server
+make reload_topics
+```
+
+## DB setup (Warning! Do NOT do this unless you want to rebuild everything in DB)
 ```bash
 cd algo_server/db
 
@@ -22,7 +28,4 @@ rm coach.db
 
 # create db tables
 sqlite3 coach.db < create_tables.sql
-
-# load topic data
-sqlite3 coach.db < topics_data.sql
 ```

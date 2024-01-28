@@ -1,8 +1,11 @@
 """Tool to load topics data into database.
 It will go through each topic defined in `topic_data.json` and call ChatGPT if needed.
 """
-
+import argparse
+from dotenv import load_dotenv
 import json
+import openai
+import os
 from typing import List, Optional
 
 from langchain.prompts import PromptTemplate
@@ -30,6 +33,12 @@ class Topic(BaseModel):
     concepts: List[Concept]
     problems: List[Problem]
 
+    def to_dict(self):
+        """
+        Convert the Pydantic model to a dictionary suitable for JSON serialization.
+        """
+        return self.dict(by_alias=True, exclude_none=True)
+
 
 class LlmTopic(BaseModel):
     concept: str = Field(description="Explanation of the concept for an algorithm")
@@ -37,7 +46,8 @@ class LlmTopic(BaseModel):
 
 
 class TopicLoader:
-    def __init__(self):
+    def __init__(self, dbfile: str):
+        self.dbservice = DBService(dbfile)
         # Set up a parser + inject instructions into the prompt template.
         self.llm_model = ChatOpenAI(temperature=0)
         self.llm_parser = JsonOutputParser(pydantic_object=LlmTopic)
@@ -53,14 +63,12 @@ class TopicLoader:
 
     def load_topics_from_db(self) -> list[Topic]:
         """Query DB to load all topics"""
-        dbservice = DBService()
-        topic_name_list = dbservice.get_all_topic_id_names()
-        assert len(topic_name_list) > 0
+        topic_name_list = self.dbservice.get_all_topic_id_names()
 
         all_topics_loaded = []
         for topic_id, topic_name in topic_name_list:
             # load each topic
-            topic_dict = dbservice.get_topic_details(topic_name)
+            topic_dict = self.dbservice.get_topic_details(topic_name)
             if topic_dict:
                 all_topics_loaded.append(Topic(**topic_dict))
         return all_topics_loaded
@@ -93,7 +101,9 @@ class TopicLoader:
 
     def load_configured_topics(self, config_file: str) -> list[str]:
         """Return a list of topic name from config file"""
-        with open(config_file, 'r') as file:
+        full_path = os.path.abspath(config_file)
+        print(f"full path: {full_path}")
+        with open(full_path, 'r') as file:
             data = json.load(file)
             topics = [item['topic'] for item in data if 'topic' in item]
         return topics
@@ -110,12 +120,31 @@ class TopicLoader:
         # Use set for quick search
         all_topic_names_from_db = set(t.name for t in all_topics_from_db)
 
-        dbservice = DBService()
         for topic_name in all_topic_names_needed:
             if topic_name and topic_name in all_topic_names_from_db:
+                print(f"Topic is in DB already. Skip LLM - {topic_name}")
                 continue  # in DB already
             # not in DB. Ask LLM for help
             print(f"Calling LLM to load topic - {topic_name}")
             new_topic: Topic = self.generate_topic_content_from_llm(topic_name)
             # TODO: Create in DB
-            dbservice.upsert_topic(new_topic)
+            topic_dict = new_topic.to_dict()
+            self.dbservice.upsert_topic(topic_dict)
+
+
+def main(dbfile, configfile):
+    # Load env
+    load_dotenv()
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    loader = TopicLoader(dbfile=dbfile)
+    loader.sync_all_topics(configfile)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Sync topics with database.")
+    parser.add_argument("--dbfile", help="The path to the database file", required=True)
+    parser.add_argument("--topicfile", help="The path to the topic file", required=True)
+    args = parser.parse_args()
+
+    main(args.dbfile, args.topicfile)

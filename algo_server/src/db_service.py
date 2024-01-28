@@ -151,3 +151,43 @@ class DBService:
         finally:
             # Disconnect from the database
             self.disconnect()
+
+    def upsert_topic(self, topic: dict) -> bool:
+        """Upsert (insert if row doesn't exit, update if it does."""
+        try:
+            self.connect()
+
+            # Create a cursor
+            cursor = self.conn.cursor()
+
+            topic_id = topic.get("id")
+            is_insert_mode = topic_id is None or topic_id < 0
+            # Insert or update data into the Topic table
+            if is_insert_mode:
+                topic_values = (topic['name'], topic.get('description', ''))
+                cursor.execute('INSERT INTO Topic (name, description) VALUES (?, ?)', topic_values)
+                topic_id = cursor.lastrowid
+            else:
+                assert False, "No update support for now!!!"
+                topic_values = (topic['name'], topic.get('description', ''), topic['id'])
+                cursor.execute('UPDATE Topic SET name=?, description=? WHERE id=?', topic_values)
+
+            # Insert data into the Concept table
+            for concept in topic['concepts']:
+                concept_values = (concept['description'], topic_id)
+                cursor.execute('INSERT INTO Concept (description, topic_id) VALUES (?, ?)', concept_values)
+
+            # Insert data into the Problem table
+            for problem in topic['problems']:
+                problem_values = (problem['name'], problem['url'], topic_id)
+                cursor.execute('INSERT INTO Problem (name, url, topic_id) VALUES (?, ?, ?)', problem_values)
+
+            # Commit changes and close the connection
+            self.conn.commit()
+            self.conn.close()
+            return True
+        finally:
+            self.disconnect()
+
+        # failed
+        return False

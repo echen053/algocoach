@@ -15,6 +15,9 @@ update:
 start_server:
 	PYTHONPATH=./src uvicorn main:app --reload
 
+reload_topics:
+	PYTHONPATH=./src poetry run python src/tool/load_topics.py --dbfile "db/coach.db" --topicfile "src/tool/topic_data_all.json"
+
 python:
 	poetry run python
 

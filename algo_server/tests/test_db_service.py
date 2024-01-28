@@ -36,3 +36,22 @@ def test_get_topic_details(dbservice: DBService, topic_name_to_test: str):
     # Verify attributes of problem
     for p in problems:
         assert set(p.keys()) == {"id", "name", "url"}
+
+
+def test_upsert_topic(dbservice: DBService):
+    new_topic = {
+        "name": "Topological Sort",
+        "description": "Very useful in interview.",
+        "concepts": [
+            {
+             "description": "DFS explores a graph or tree by going as deep as possible down each branch before backtracking..."}
+        ],
+        "problems": [
+            {"name": "94. Binary Tree Inorder Traversal",
+             "url": "https://leetcode.com/problems/binary-tree-inorder-traversal"},
+            {"name": "98. Validate Binary Search Tree",
+             "url": "https://leetcode.com/problems/validate-binary-search-tree"},
+            {"name": "112. Path Sum", "url": "https://leetcode.com/problems/path-sum"}
+        ]
+    }
+    dbservice.upsert_topic(new_topic)

@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 import pytest
-from langchain_openai import ChatOpenAI
 
 from db_service import DBService
 from tool.load_topics import TopicLoader, Topic
@@ -12,18 +11,23 @@ from unittest.mock import patch, Mock
 
 
 @pytest.fixture
-def topic_loader_real():
-    return TopicLoader()  # replace with actual instantiation
+def test_db_file():
+    yield '../db/coach.db'
 
 
 @pytest.fixture
-def topic_loader_with_mocked_llm():
+def topic_loader_real(test_db_file):
+    return TopicLoader(test_db_file)  # replace with actual instantiation
+
+
+@pytest.fixture
+def topic_loader_with_mocked_llm(test_db_file):
     with patch('tool.load_topics.ChatOpenAI') as mock_chat_openai:
         # Mock the constructor to return a Mock object
         mock_chat_openai.return_value = Mock()
 
         # Create an instance of TopicLoader which will use the mocked ChatOpenAI
-        yield TopicLoader()
+        yield TopicLoader(test_db_file)
 
 
 @pytest.fixture
@@ -33,41 +37,38 @@ def openai_instance():
 
 
 @pytest.fixture
-def langchain_chain_invoke():
-    with patch("langchain_core.runnables.base.RunnableSequence.invoke") as _fixture:
-        yield _fixture
-
-
-@pytest.fixture()
-def dbservice():
-    with patch("tool.load_topics.DBService") as mocked_db_service:
-        mocked_db_service.return_value = DBService('../db/coach.db')
-        yield mocked_db_service
-
-
-# @pytest.mark.skip
-def test_fetch_topic_from_mocked_llm(openai_instance, topic_loader_real, langchain_chain_invoke):
-    # Mock the chain
-    # Define expected response
-    expected_res_json_from_llm = {
+def mocked_llm_response():
+    faked_llm_data = {
         'concept': 'Depth First Search (DFS) is a graph traversal algorithm that explores as far as possible along each branch before backtracking. It starts at a given node (usually the root) and explores as far as possible along each branch before backtracking.',
         'problems': [{'name': 'Number of Islands', 'url': 'https://leetcode.com/problems/number-of-islands/'},
                      {'name': 'Word Search', 'url': 'https://leetcode.com/problems/word-search/'},
                      {'name': 'Surrounded Regions', 'url': 'https://leetcode.com/problems/surrounded-regions/'},
                      {'name': 'Path Sum', 'url': 'https://leetcode.com/problems/path-sum/'},
                      {'name': 'Binary Tree Paths', 'url': 'https://leetcode.com/problems/binary-tree-paths/'}]}
+    yield faked_llm_data
 
-    langchain_chain_invoke.return_value = expected_res_json_from_llm
 
+@pytest.fixture
+def langchain_chain_invoke(mocked_llm_response):
+    with patch("langchain_core.runnables.base.RunnableSequence.invoke") as invoke_func:
+        invoke_func.return_value = mocked_llm_response
+        yield invoke_func
+
+
+# @pytest.mark.skip
+def test_fetch_topic_from_mocked_llm(mocked_llm_response,
+                                     openai_instance,
+                                     topic_loader_real,
+                                     langchain_chain_invoke):
     # Call the method
     topic_name = "Test Topic"
     result = topic_loader_real.generate_topic_content_from_llm(topic_name)
 
     # Verify the result
     assert result.name == topic_name
-    assert result.concepts[0].description == expected_res_json_from_llm["concept"]
-    assert result.problems[0].name == expected_res_json_from_llm["problems"][0]["name"]
-    assert result.problems[0].url == expected_res_json_from_llm["problems"][0]["url"]
+    assert result.concepts[0].description == mocked_llm_response["concept"]
+    assert result.problems[0].name == mocked_llm_response["problems"][0]["name"]
+    assert result.problems[0].url == mocked_llm_response["problems"][0]["url"]
 
     # Verify that chain.invoke was called with the correct argument
     langchain_chain_invoke.assert_called_once_with({"topic": topic_name})
@@ -84,12 +85,17 @@ def test_fetch_topic_from_real_llm(openai_instance, topic_loader_real):
     assert len(topic.problems) > 0
 
 
-def test_load_topics_from_db(topic_loader_with_mocked_llm, dbservice):
+def test_load_topics_from_db(topic_loader_with_mocked_llm):
     all_db_topics = topic_loader_with_mocked_llm.load_topics_from_db()
     assert len(all_db_topics) > 0
     assert isinstance(all_db_topics[0], Topic)
 
 
-def test_sync_all_topics_dry_run(topic_loader_with_mocked_llm, dbservice):
-    config_file = "../src/tool/topic_data.json"
-    topic_loader_with_mocked_llm.sync_all_topics(config_file)
+def test_sync_all_topics_dry_run(openai_instance, topic_loader_real, langchain_chain_invoke):
+    config_file = "test_topic_data.json"
+    topic_loader_real.sync_all_topics(config_file)
+
+
+def test_sync_all_topics_with_llm(openai_instance, topic_loader_real):
+    config_file = "../src/tool/topic_data_all.json"
+    topic_loader_real.sync_all_topics(config_file)
