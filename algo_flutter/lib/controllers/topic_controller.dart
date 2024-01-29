@@ -93,16 +93,6 @@ class TopicController {
     return selectedTopic?.problems ?? [];
   }
 
-
-  // TODO: To be removed
-  Problem? getFirstProblem() {
-    if (selectedTopic == null || selectedTopic?.problems.length == 0) {
-      return null;
-    }
-
-    return selectedTopic?.problems[0];
-  }
-
   static TopicController build() {
     return TopicController();
   }

@@ -24,7 +24,7 @@ app.add_middleware(
 async def get_all_topics():
     """Get all available topic names"""
     db = DBService()
-    return db.get_all_topic_names()
+    return [topic[1] for topic in db.get_all_topic_id_names()]
 
 
 @app.get("/topics")
