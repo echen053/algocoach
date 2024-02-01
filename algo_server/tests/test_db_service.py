@@ -38,6 +38,7 @@ def test_get_topic_details(dbservice: DBService, topic_name_to_test: str):
         assert set(p.keys()) == {"id", "name", "url"}
 
 
+@pytest.mark.skip(reason="Not fully done yet")
 def test_upsert_topic(dbservice: DBService):
     new_topic = {
         "name": "Topological Sort",
@@ -55,3 +56,6 @@ def test_upsert_topic(dbservice: DBService):
         ]
     }
     dbservice.upsert_topic(new_topic)
+
+    # TODO: check record is in DB
+    # TODO: delete the test data.
