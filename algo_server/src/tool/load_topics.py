@@ -86,9 +86,9 @@ class TopicLoader:
             return matched_topic
 
         # No content found. Try LLM.
-        return self.generate_topic_content_from_llm(topic_name)
+        return self._generate_topic_content_from_llm(topic_name)
 
-    def generate_topic_content_from_llm(self, topic_name: str) -> Optional[Topic]:
+    def _generate_topic_content_from_llm(self, topic_name: str) -> Optional[Topic]:
         """Call ChatGPT to load a topic. Avoid this whenever possible due to the cost."""
         # Use langchain
         chain = self.llm_prompt | self.llm_model | self.llm_parser

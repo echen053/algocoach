@@ -51,8 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: TopicScreen(
         controller: controller,
         onRefresh: () {
-          // Put the logic you want to execute on refresh here
-          // This can include updating state variables, fetching new data, etc.
+          // Put the logic executing on refresh here
 
           // Trigger a rebuild of the widget
           setState(() {});

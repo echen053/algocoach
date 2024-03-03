@@ -21,4 +21,3 @@ CREATE TABLE IF NOT EXISTS Problem (
     topic_id INTEGER,
     FOREIGN KEY (topic_id) REFERENCES Topic(id)
 );
-

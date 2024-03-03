@@ -8,6 +8,11 @@ poetry install
 brew install sqlite
 ```
 
+## Install dependencies
+```
+make install
+```
+
 ## To start the Server
 ```bash
 make server  # CTRL-C to stop it.

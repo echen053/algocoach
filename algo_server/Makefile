@@ -13,7 +13,7 @@ update:
 	poetry update langchain
 
 start_server:
-	PYTHONPATH=./src uvicorn main:app --reload
+	PYTHONPATH=./src uvicorn server:app --reload
 
 reload_topics:
 	PYTHONPATH=./src poetry run python src/tool/load_topics.py --dbfile "db/coach.db" --topicfile "src/tool/topic_data_all.json"

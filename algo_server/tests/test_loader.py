@@ -2,7 +2,6 @@ from dotenv import load_dotenv
 import os
 import pytest
 
-from db_service import DBService
 from tool.load_topics import TopicLoader, Topic
 
 import openai
@@ -17,7 +16,7 @@ def test_db_file():
 
 @pytest.fixture
 def topic_loader_real(test_db_file):
-    return TopicLoader(test_db_file)  # replace with actual instantiation
+    yield TopicLoader(test_db_file)  # replace with actual instantiation
 
 
 @pytest.fixture
@@ -62,12 +61,13 @@ def test_fetch_topic_from_mocked_llm(mocked_llm_response,
                                      langchain_chain_invoke):
     # Call the method
     topic_name = "Test Topic"
-    result = topic_loader_real.generate_topic_content_from_llm(topic_name)
+    result = topic_loader_real._generate_topic_content_from_llm(topic_name)
 
     # Verify the result
     assert result.name == topic_name
     assert result.concepts[0].description == mocked_llm_response["concept"]
-    assert result.problems[0].name == mocked_llm_response["problems"][0]["name"]
+    assert result.problems[0].name == "Number of Islands"
+    assert result.problems[1].name == "Word Search"
     assert result.problems[0].url == mocked_llm_response["problems"][0]["url"]
 
     # Verify that chain.invoke was called with the correct argument

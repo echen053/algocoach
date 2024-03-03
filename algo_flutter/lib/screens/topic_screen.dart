@@ -2,7 +2,6 @@ import 'package:algo_flutter/screens/problem_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../controllers/topic_controller.dart';
-import '../models/topic.dart';
 import 'concept_widget.dart';
 
 class TopicScreen extends StatelessWidget {
@@ -39,7 +38,6 @@ class TopicScreen extends StatelessWidget {
           );
         } else {
           // Display the topics
-          List<String> topics = snapshot.data!;
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
