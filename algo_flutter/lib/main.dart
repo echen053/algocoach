@@ -16,7 +16,17 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'AlgoCoach',
       theme: ThemeData(
+        primaryColor: Constants.DARK_GREEN,
         scaffoldBackgroundColor: Constants.BACKGROUND_COLOR,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Constants.DARK_GREEN,
+        ),
+        fontFamily: "Georgia",
+        textTheme: const TextTheme(
+          displayLarge: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black, fontFamily: "Georgia"),
+          bodyLarge: TextStyle(fontSize: 16, color: Colors.black87, fontFamily: "Georgia"),
+        ),
       ),
       home: const MyHomePage(title: 'AlgoCoach'),
     );
@@ -35,25 +45,71 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TopicController controller = TopicController.build();
 
+  Widget _buildNavButton(String text, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Constants.DARK_GREEN,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        elevation: 2,
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Constants.BACKGROUND_COLOR,
+          fontFamily: "Georgia"
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Constants.BACKGROUND_COLOR,
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 25,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60), // Adjust height
+        child: AppBar(
+          backgroundColor: Constants.CARD_BACKGROUND_COLOR, // Light green background
+          elevation: 0, // Remove shadow
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Logo with shadow effect
+              Text(
+                'AlgoCoach📚',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Roboto",
+                  color: Constants.DARK_GREEN,
+                  shadows: const [
+                    Shadow(offset: Offset(2, 2), blurRadius: 3, color: Colors.black38),
+                  ],
+                ),
+              ),
+
+              // Navigation Buttons
+              Row(
+                children: [
+                  _buildNavButton("Log in", () {}),
+                  const SizedBox(width: 15),
+                  _buildNavButton("Home", () {}),
+                  const SizedBox(width: 10),
+                  _buildNavButton("Progress", () {}),
+                ],
+              ),
+            ],
           ),
         ),
       ),
       body: TopicScreen(
         controller: controller,
         onRefresh: () {
-          // Put the logic executing on refresh here
-
-          // Trigger a rebuild of the widget
           setState(() {});
         },
       ),

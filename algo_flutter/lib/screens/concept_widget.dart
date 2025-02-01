@@ -13,25 +13,26 @@ class ConceptWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 400,
-      padding: EdgeInsets.all(10.0),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
         color: Constants.CARD_BACKGROUND_COLOR,
-        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))],
       ),
-      child: Align(
-          alignment: Alignment.topCenter,
-          child: Column(
-            children: [
-              const Text(
-                "Concept:\n",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-              Text(concept?.description ?? "", softWrap: true),
-            ],
-          )),
+      child: Column(
+        children: [
+          const Text(
+            "Concept:",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Constants.DARK_GREEN),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            concept?.description ?? "",
+            softWrap: true,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
     );
   }
 }
