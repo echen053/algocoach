@@ -19,31 +19,38 @@ class ProblemWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))],
         ),
-      child: Column(
-        children: [
-          const Text(
-            "Problems:",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Constants.DARK_GREEN),
-          ),
-          const SizedBox(height: 5),
-          Column(
-            children: [
-              for (Problem problem in problems)
-                GestureDetector(
-                  onTap: () => _launchURL(problem.url),
-                  child: Text(
-                    problem.name,
-                    style: const TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                      decoration: TextDecoration.underline,
+        child: Column(
+          children: [
+            const Text(
+              "Problems:",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                color: Constants.DARK_GREEN,
+                fontFamily: "Georgia",
+              ),
+            ),
+            const SizedBox(height: 5),
+            Column(
+              children: [
+                for (Problem problem in problems)
+                  GestureDetector(
+                    onTap: () => _launchURL(problem.url),
+                    child: Text(
+                      problem.name,
+                      style: TextStyle(
+                        color: Colors.blue[800],
+                        fontSize: 16,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.blue[800],
+                        decorationStyle: TextDecorationStyle.solid,
+                      ),
                     ),
                   ),
-                ),
-            ],
-          ),
-        ],
-      ));
+              ],
+            ),
+          ],
+        ));
   }
 }
 

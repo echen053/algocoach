@@ -23,13 +23,14 @@ class ConceptWidget extends StatelessWidget {
         children: [
           const Text(
             "Concept:",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Constants.DARK_GREEN),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Constants.DARK_GREEN, fontFamily: "Georgia"),
           ),
           const SizedBox(height: 5),
           Text(
             concept?.description ?? "",
             softWrap: true,
             textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 16, fontFamily: "Georgia", color: Constants.DARK_GREEN),
           ),
         ],
       ),
