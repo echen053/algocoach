@@ -126,7 +126,7 @@ class TopicLoader:
                 continue  # in DB already
             # not in DB. Ask LLM for help
             print(f"Calling LLM to load topic - {topic_name}")
-            new_topic: Topic = self.generate_topic_content_from_llm(topic_name)
+            new_topic: Topic = self._generate_topic_content_from_llm(topic_name)
             # TODO: Create in DB
             topic_dict = new_topic.to_dict()
             self.dbservice.upsert_topic(topic_dict)

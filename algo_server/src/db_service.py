@@ -191,3 +191,33 @@ class DBService:
 
         # failed
         return False
+
+    def update_concept(self, topic_name: str, new_description: str):
+        """Update a concept description for a given topic name"""
+        try:
+            self.connect()
+            cursor = self.conn.cursor()
+
+            # Check if the topic exists
+            cursor.execute("SELECT id FROM Topic WHERE name = ?", (topic_name,))
+            topic = cursor.fetchone()
+
+            if not topic:
+                print(f"Error: Topic '{topic_name}' not found in database.")
+                return False
+
+            topic_id = topic[0]
+
+            # Update the concept description in the database
+            cursor.execute("UPDATE Concept SET description = ? WHERE topic_id = ?", (new_description, topic_id))
+            self.conn.commit()
+
+            print(f"Successfully updated concept for topic: {topic_name}")
+            return True
+
+        except sqlite3.Error as e:
+            print(f"Database error: {e}")
+            return False
+
+        finally:
+            self.disconnect()
