@@ -10,3 +10,77 @@ AlgoCoach is a cross-platform educational application designed to help users lea
 - Backend: Python, FastAPI
 - Database: SQLite
 - API: OpenAI API
+
+## Install and Run
+
+### Credential Setup
+
+1. Create a .env file in the server directory and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=<your-openai-api-key>
+   ```
+
+### Client
+
+1. Navigate to the frontend directory
+
+   ```
+   cd algo_flutter
+   ```
+
+2. Get Flutter dependencies
+
+   ```
+   flutter pub get
+   ```
+
+3. Run the app
+
+   You can run it on:
+
+   - Web: `flutter run -d chrome`
+   - iOS: `flutter run -d ios`(requires Mac & Xcode)
+   - Android: `flutter run -d android`
+   - Desktop: `flutter run -d macos / -d windows / -d linux`
+
+   Make sure your device/emulator is running or selected with flutter devices.
+
+### Server
+
+1. Setup projects
+
+   ```
+   poetry install
+   brew install sqlite
+   ```
+
+2. Install dependencies
+
+   ```
+   make install
+   ```
+
+3. Start the server
+
+   ```bash
+   make server
+   ```
+
+4. Load DB data from LLM/ChatGPT
+
+   ```shell
+   cd algo_server
+   make reload_topics
+   ```
+
+5. DB setup (Warning! Do NOT do this unless you want to rebuild everything in DB)
+
+   ```bash
+   cd algo_server/db
+
+   # remove db if needed
+   rm coach.db
+
+   # create db tables
+   sqlite3 coach.db < create_tables.sql
+   ```
